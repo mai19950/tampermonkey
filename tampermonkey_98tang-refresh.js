@@ -7,6 +7,8 @@
 // @match        https://www.sehuatang.org/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=sehuatang.org
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_98tang-refresh.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_98tang-refresh.js
 // ==/UserScript==
 
 (function() {

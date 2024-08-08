@@ -7,6 +7,8 @@
 // @match        https://javdb.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=javdb.com
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_ADD-Title-For-javdb.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_ADD-Title-For-javdb.js
 // ==/UserScript==
 
 (function() {

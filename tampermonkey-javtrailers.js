@@ -7,6 +7,8 @@
 // @match        https://javtrailers.com/*
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey-javtrailers.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey-javtrailers.js
 // ==/UserScript==
 
 (function () {

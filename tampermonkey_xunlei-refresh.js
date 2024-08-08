@@ -8,6 +8,8 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=xunlei.com
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_xunlei-refresh.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_xunlei-refresh.js
 // ==/UserScript==
 
 (function() {

@@ -6,6 +6,8 @@
 // @author       Your Name
 // @match        https://*/2048/*.php*
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_replace-2048-domain.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey_replace-2048-domain.js
 // ==/UserScript==
 
 (function() {

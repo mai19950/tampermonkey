@@ -9,6 +9,8 @@
 // @match        https://www.rr2022.com/*/*
 // @icon         https://www.rrdynb.com/favicon.ico
 // @grant        none
+// @downloadURL https://github.com/mai19950/tampermonkey/raw/main/tampermonkey-%E4%BA%BA%E4%BA%BA%E7%94%B5%E5%BD%B1%E7%BD%91.js
+// @updateURL   https://github.com/mai19950/tampermonkey/raw/main/tampermonkey-%E4%BA%BA%E4%BA%BA%E7%94%B5%E5%BD%B1%E7%BD%91.js
 // ==/UserScript==
 
 (function () {
