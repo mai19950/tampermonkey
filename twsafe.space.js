@@ -7,6 +7,8 @@
 // @match        https://www.twsafe.space/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=twsafe.space
 // @grant        none
+// @downloadURL  https://github.com/mai19950/tampermonkey/raw/main/twsafe.space.js
+// @updateURL    https://github.com/mai19950/tampermonkey/raw/main/twsafe.space.js
 // ==/UserScript==
 
 (function () {
