@@ -14,7 +14,7 @@
   'use strict';
 
   // 定义新的域名
-  const newDomain = 'bbs.eyz8.com';
+  const newDomain = 'hjd2048.com';
 
   // 获取当前页面的主机名
   let currentHostname = window.location.hostname;
