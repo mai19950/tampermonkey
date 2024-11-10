@@ -5,6 +5,8 @@
 // @description  try to take over the world!
 // @author       git@github.com:mai19950
 // @match        https://pan.xunlei.com/*
+// @match        https://pan.quark.cn/*
+// @match        https://pan.baidu.com/disk/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=xunlei.com
 // @require      https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js
 // @grant        none
@@ -19,7 +21,7 @@
   /* 自定义样式 */
   #fixed-tag {
     position: fixed;
-    top: 50%;
+    top: 90%;
     left: 20px;
     background-color: #007bff;
     color: white;
