@@ -21,7 +21,7 @@
   /* 自定义样式 */
   #fixed-tag {
     position: fixed;
-    top: 50%;
+    top: 90%;
     left: 20px;
     background-color: #007bff;
     color: white;
