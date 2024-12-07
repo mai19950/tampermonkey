@@ -18,23 +18,38 @@
   'use strict';
 
   function copySkrBt() {
-    // var o = document.querySelector(`#archiveResult > tbody > tr:nth-child(${num}) a[rel="information"]`)
-    var title = document.querySelector("h3").innerText.trim();
-    var href = document
+    const title = document.querySelector("h3").innerText.trim();
+    const href = document
       .querySelector(".list-unstyled li:nth-child(4)")
       .innerText.replace(/.*?([0-9A-Za-z]).*?/, "$1");
-    var size = document
+    const size = document
       .querySelector(".panel-body .list-unstyled li:nth-of-type(2)")
       .textContent.trim()
       .replace("文件大小：", "");
-    var t = `[${title}(${size})](magnet:?xt=urn:btih:${href})`;
-    var input = document.createElement("input");
-    input.setAttribute("value", t);
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand("copy");
-    document.body.removeChild(input);
+    const t = `[${title}(${size})](magnet:?xt=urn:btih:${href})`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(
+        () => {
+          console.log("复制成功！");
+          alert(t);
+        },
+        (err) => {
+          console.error("复制失败：", err);
+        }
+      )
+    } else {
+      const inputEl = document.createElement('input')
+      inputEl.setAttribute("value", t)
+      document.body.appendChild(inputEl)
+      inputEl.select()
+      if (document.execCommand("copy")) {
+        alert(t)
+      } else {
+        console.error("复制失败")
+      }
+    }
     return t;
   }
-  alert(copySkrBt());
+  copySkrBt();
 })();

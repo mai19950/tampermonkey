@@ -40,7 +40,7 @@
   `)
 
   // 设置刷新间隔时间（单位：毫秒）
-  const refreshInterval = 1800000; // 300000毫秒 = 5分钟
+  const refreshInterval = 6 * 60 * 60 * 1000 ; // 300000毫秒 = 5分钟
 
   // 设置定时器，每隔一段时间执行刷新函数
   // setInterval(refreshPage, refreshInterval);
