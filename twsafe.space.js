@@ -5,6 +5,7 @@
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.twsafe.space/*
+// @match        https://www.786551.xyz/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=twsafe.space
 // @grant        none
 // @downloadURL  https://github.com/mai19950/tampermonkey/raw/main/twsafe.space.js
