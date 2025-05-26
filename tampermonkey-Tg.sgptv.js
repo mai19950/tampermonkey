@@ -18,6 +18,8 @@
   // 这些样式适用于所有具有 'tampermonkey-fixed-button' 类的按钮
   GM_addStyle(`
   .tampermonkey-fixed-button {
+      right: 30px;         /* 距离右侧30px */
+      top: 100px;
       position: fixed;       /* 固定定位 */
       z-index: 1000;         /* 确保按钮在其他内容之上 */
       color: white;          /* 白色文字 */
@@ -35,8 +37,71 @@
   .tampermonkey-fixed-button:hover {
       opacity: 1;
   }
-  `);
-  const btns = [];
+
+  #myModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 9999;
+}
+    #myModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 10000;
+    max-width: 90vw;
+    min-width: 70vw;
+    max-height: 90vh;
+}
+/* ===== 极简 pre 标签样式 ===== */
+#myModal pre {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-left: 4px solid #2c3e50;
+  padding: 1em;
+  margin: 1em 0;
+  overflow-x: auto;
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+  font-size: 12px;
+  color: #2c3e50;
+  line-height: 1.5;
+  border-radius: 4px;
+  /* 强制文本选择 */
+  user-select: text;      /* 强制整个pre区域可选择 */
+  -webkit-user-select: text; /* Safari 兼容 */
+  -moz-user-select: text;    /* Firefox 兼容 */
+}
+`);
+  const elements = [];
+  const overlay = document.createElement("div");
+  elements.push(overlay);
+  overlay.id = "myModalOverlay";
+
+  const modal = document.createElement("div");
+  modal.id = "myModal";
+  overlay.appendChild(modal);
+
+  overlay.addEventListener("click", function (e) {
+    if (e.target === overlay) {
+      overlay.style.display = "none"; // 隐藏模态窗口
+    }
+  });
+
+  function showModal(data) {
+    const code = data.map(e => JSON.stringify(e)).join(",\n  ");
+    console.info(code);
+    modal.innerHTML = `<pre>${"  " + code}</pre>`; // 设置模态窗口的内容
+    overlay.style.display = "block"; // 显示模态窗口
+  }
   // 创建按钮元素
   const oBtn01 = document.createElement("button");
   oBtn01.textContent = "SGPTV002"; // 按钮显示的文字
@@ -44,10 +109,8 @@
   oBtn01.classList.add("tampermonkey-fixed-button");
 
   // 添加 unique 样式 (位置和颜色)
-  oBtn01.style.top = "100px"; // 距离底部30px
-  oBtn01.style.right = "30px"; // 距离右侧30px
   oBtn01.style.backgroundColor = "#0984e3"; // 蓝色背景
-  btns.push(oBtn01);
+  elements.push(oBtn01);
 
   // 添加点击事件监听器
   oBtn01.addEventListener("click", function () {
@@ -79,7 +142,7 @@
       })
       .filter(it => it.order && !it.order.startsWith("none"))
       .reduce((arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]), window.d || []);
-    console.log(d.map(e => JSON.stringify(e)).join(",\n"));
+    showModal(d);
   });
 
   const oBtn02 = document.createElement("button");
@@ -89,9 +152,8 @@
 
   // 添加 unique 样式 (位置和颜色)
   oBtn02.style.top = "150px"; // 距离底部30px
-  oBtn02.style.right = "30px"; // 距离右侧30px
   oBtn02.style.backgroundColor = "#00b894"; // 蓝色背景
-  btns.push(oBtn02);
+  elements.push(oBtn02);
 
   oBtn02.addEventListener("click", function () {
     console.log("数据提取按钮被点击，开始执行代码...");
@@ -123,14 +185,14 @@
       })
       .filter(it => it && it.order && it.order != "")
       .reduce((arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]), []);
-    console.log(d.map(e => JSON.stringify(e)).join(",\n"));
+    showModal(d);
   });
 
   // 将按钮添加到页面 body
   // 确保 body 元素存在后再添加按钮
   function appendButtons() {
     if (document.body) {
-      btns.forEach(btn => document.body.appendChild(btn));
+      elements.forEach(btn => document.body.appendChild(btn));
     } else {
       // 如果body还没准备好，等待 DOMContentLoaded 事件或下一帧
       requestAnimationFrame(appendButtons);
