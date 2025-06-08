@@ -49,6 +49,8 @@
     z-index: 9999;
 }
     #myModal {
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -70,6 +72,8 @@
   padding: 1em;
   margin: 1em 0;
   overflow-x: auto;
+  overflow-y: auto;        
+  max-height: 90%; 
   font-family: Consolas, Monaco, 'Courier New', monospace;
   font-size: 12px;
   color: #2c3e50;
@@ -99,7 +103,7 @@
   function showModal(data) {
     const code = data.map(e => JSON.stringify(e)).join(",\n  ");
     console.info(code);
-    modal.innerHTML = `<pre>${"  " + code}</pre>`; // 设置模态窗口的内容
+    modal.innerHTML = `<pre>\n\n\n${"  " + code}\n\n\n</pre>`; // 设置模态窗口的内容
     overlay.style.display = "block"; // 显示模态窗口
   }
   // 创建按钮元素
