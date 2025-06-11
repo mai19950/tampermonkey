@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         javtrailers-data
 // @namespace    mai19950@github.com
-// @version      1.0
+// @version      2.0
 // @description  显示网页内容
 // @author       mai19950
 // @match        https://javtrailers.com/*
@@ -62,8 +62,65 @@
       #__code code {
         padding: 10px;
       }
+      .box.copy-title {
+          background-color: #3e8ed0; /* 背景色 */
+          text-align: center; /* 文本水平居中 */
+          padding: 3px; /* 内边距 */
+          margin: 5px auto; /* 左右居中 */
+          color: #fff;
+          font-wight: 1000;
+          cursor: pointer;
+      }
     </style>`
   );
+
+    // 已处理过的元素添加一个标记类，避免重复插入
+  function enhanceExcerpt($el) {
+    if ($el.hasClass("copy-title-inserted")) return;
+    $el.addClass("copy-title-inserted");
+
+    var text = $el.find("p.card-text.title").text().trim().split(" ")[0];
+    const $box = $('<div class="box copy-title">' + text + "</div>");
+    $el.prepend($box);
+    $box.click(function () {
+      copyToClipboard(text);
+      $box.css("background-color", "#8BC34A");
+      setTimeout(() => $box.css("background-color", "#3e8ed0"), 1000);
+    });
+  }
+
+  function enhanceAll() {
+    $(".card-container").each(function () {
+      enhanceExcerpt($(this));
+    });
+  }
+
+  // 初始处理一次
+  $(document).ready(function () {
+    enhanceAll();
+  });
+
+    // 使用 MutationObserver 监听新内容添加
+  const observer = new MutationObserver(function (mutationsList) {
+    for (const mutation of mutationsList) {
+      $(mutation.addedNodes).each(function () {
+        const $node = $(this);
+        if ($node.is(".card-container")) {
+          enhanceExcerpt($node);
+        } else {
+          // 也许子节点中有 .card-container
+          $node.find(".card-container").each(function () {
+            enhanceExcerpt($(this));
+          });
+        }
+      });
+    }
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
 
   const oShowData = document.createElement("div");
   oShowData.id = "show-data";
@@ -168,5 +225,14 @@
     oBtn.className = "action-btn";
     oBtn.type = "button";
     return oBtn;
+  }
+
+  function copyToClipboard(text) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(text).select();
+    document.execCommand("copy");
+    $temp.remove();
+    // alert('文本已复制到剪贴板：' + text);
   }
 })();
