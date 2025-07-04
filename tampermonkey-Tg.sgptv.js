@@ -170,22 +170,25 @@
         textMsg.querySelector(".Reactions")?.remove();
         textMsg.querySelector(".MessageMeta")?.remove();
         const htmlStr = textMsg.textContent.replaceAll(/\s+/g, " ");
-        const matchRes = htmlStr.match(
-          /^(?<order>[\da-z]+)(?<desc>.+?)(?:番号：(?<code>.+?))?女优：(?<actor>(#.+?)+)(标签|出处)：(?<tags>(#.+?)+)$/i
-        );
-        const groups = matchRes?.groups || {};
-        return {
-          id: Number(e.id.replace("message-", "")),
-          order: groups.order || "",
-          code: groups.code?.trim().replace(" ", "") || "none",
-          desc: groups.desc?.trim() || "",
-          actor: groups.actor
-            ?.split("#")
-            .filter(Boolean)
-            .map(item => item.trim())
-            .join("."),
-          tags: groups.tags?.split(" "),
-        };
+        const data = {id: Number(e.id.replace("message-", "")), order: null, code: "none", desc: "", actor: "none", tags: []};
+        const res = htmlStr.match(/^(?<order>[\da-zA-Z]+)\s+(?<rest>.+?)标签：(?<tags>(?:#\S+\s*)+)$/i)
+        let { order = '', rest = '', tags = '' } = res?.groups || {};
+
+        data.order = order;
+        data.tags = tags?.split(/\s+/)
+
+        const codeMatch = rest.match(/番号：([^\s女优：]+)/);
+        if (codeMatch) {
+          data.code = codeMatch[1].trim().replaceAll(/\s+/g, '.')
+          rest = rest.replace(/番号：[^\s女优：]+/, '').trim();
+        }
+        const actorMatch = rest.match(/女优：(.+?)$/);
+        if (actorMatch) {
+          data.actor = actorMatch[1].trim().split(/\s*#/).filter(Boolean).map(s => s.trim()).join(".");
+          rest = rest.replace(/女优：(.+?)$/, '').trim();
+        }
+        data.desc = rest.trim();
+        return data;
       })
       .filter(it => it && it.order && it.order != "")
       .reduce((arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]), []);
