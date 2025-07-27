@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         Get-SGPTV
+// @name         Get-SGPTV-K
 // @namespace    http://tampermonkey.net/
-// @version      2.0.0
+// @version      1.0.0
 // @description  try to take over the world!
 // @author       mai19950
-// @match        https://web.telegram.org/a/*
+// @match        https://web.telegram.org/k/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=telegram.org
 // @grant        GM_addStyle
 // @downloadURL  https://github.com/mai19950/tampermonkey/raw/main/tampermonkey-Tg.sgptv.js
@@ -13,6 +13,8 @@
 
 (function () {
   "use strict";
+  unsafeWindow.sgp002 = [];
+  unsafeWindow.sgp003 = [];
 
   // 使用 GM_addStyle 添加共享的 CSS 样式
   // 这些样式适用于所有具有 'tampermonkey-fixed-button' 类的按钮
@@ -121,32 +123,49 @@
     console.log("数据提取按钮被点击，开始执行代码...");
 
     // --- 用户提供的 JavaScript 代码开始 ---
-    // 这段代码将查找消息容器和消息元素，提取相关信息，并存储到 window.d 变量中
-    const d = Array.from(
-      document.querySelector(".messages-container")?.querySelectorAll("[id^='message-']") || []
-    )
+    // 这段代码将查找消息容器和消息元素，提取相关信息，并存储到 unsafeWindow.d 变量中
+    unsafeWindow.sgp002 = getItems()
       .map(e => {
-        const desc = Array.from(e.querySelector(".text-content")?.childNodes || [])
-          .filter(nd => nd.nodeType === Node.TEXT_NODE || nd?.tagName === "CODE")
-          .reduce((ac, nd) => (ac += nd.textContent.trim()), "");
+        const peerId = e.getAttribute("data-peer-id").trim();
+        if (peerId !== "-2090605054") {
+          return { order: null };
+        }
+        const msgContentList =
+          e.querySelector(".translatable-message")?.textContent.trim().split("\n") || [];
+        const id = Number(e.getAttribute("data-mid")) & 0xffffffff;
+        let desc = "",
+          code = "none",
+          tags = [];
+        msgContentList.forEach(msg => {
+          if (msg.startsWith("番号：")) {
+            code = msg.replace(/番号[:：]\s*(.+?)/i, "$1").replace(/\s+/g, '.');
+          } else if (msg.startsWith("#")) {
+            tags = msg.split(" ").filter(it => it != "#水果派");
+          } else {
+            desc += msg;
+          }
+        });
         return {
-          id: Number(e.id.replace("message-", "")),
+          id,
+          code,
           order:
             desc
               .match(/((π[\d]+)|([\d]+[a-z]))/gi)
               ?.at(0)
               ?.trim() || "none",
-          tags: [...e.querySelectorAll('a[data-entity-type="MessageEntityHashtag"]')]
-            .map(a => a.textContent)
-            .filter(n => !n.includes("#水果派")),
-          duration: e.querySelector(".message-media-duration")?.textContent,
-          desc,
-          code: e.querySelector("code.text-entity-code")?.textContent?.trim() || "none",
+          tags,
+          duration: e.querySelector(".video-time")?.textContent,
+          desc: desc.replace(/\s+/g, ' '),
         };
       })
       .filter(it => it.order && !it.order.startsWith("none"))
-      .reduce((arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]), window.d || []);
-    showModal(d);
+      .reduce(
+        (arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]),
+        unsafeWindow.sgp002 || []
+      );
+    // unsafeWindow.sgp002.concat(d)
+    unsafeWindow.sgp002 = sortData(unsafeWindow.sgp002);
+    showModal(unsafeWindow.sgp002);
   });
 
   const oBtn02 = document.createElement("button");
@@ -161,40 +180,55 @@
 
   oBtn02.addEventListener("click", function () {
     console.log("数据提取按钮被点击，开始执行代码...");
-    const d = Array.from(
-      document.querySelector(".messages-container").querySelectorAll("[id^='message-']")
-    )
+    unsafeWindow.sgp003 = getItems()
       .map(e => {
-        const textMsg = e.querySelector(".text-content");
-        if (!textMsg) return {};
-        textMsg.querySelector(".Reactions")?.remove();
-        textMsg.querySelector(".MessageMeta")?.remove();
-        const htmlStr = textMsg.textContent.replaceAll(/\s+/g, " ");
-        const data = {id: Number(e.id.replace("message-", "")), order: null, code: "none", desc: "", actor: "none", tags: []};
-        const res = htmlStr.match(/^(?<order>[\da-zA-Z]+)\s+(?<rest>.+?)标签：\s*(?<tags>(?:#\S+\s*)+)$/i)
-        let { order = '', rest = '', tags = '' } = res?.groups || {};
-
-        data.order = order;
-        data.tags = tags?.split(/\s+/)
-
-        const fan_reg = /番号：\s*([^\s女优：]+)/
-        const codeMatch = rest.match(fan_reg);
-        if (codeMatch) {
-          data.code = codeMatch[1].trim().replaceAll(/\s+/g, '.')
-          rest = rest.replace(fan_reg, '').trim();
+        const peerId = e.getAttribute("data-peer-id").trim();
+        if (peerId !== "-1846698502") {
+          return { order: null };
         }
-        const actor_reg = /女优：\s*(.+?)$/
-        const actorMatch = rest.match(actor_reg);
-        if (actorMatch) {
-          data.actor = actorMatch[1].trim().split(/\s*#/).filter(Boolean).map(s => s.trim()).join(".");
-          rest = rest.replace(actor_reg, '').trim();
+        const msgContentList =
+          e.querySelector(".translatable-message")?.textContent.trim().split("\n") || [];
+        const id = Number(e.getAttribute("data-mid")) & 0xffffffff;
+        const data = { id, order: null, code: "none", actor: "none", tags: [], desc: "" };
+        msgContentList.forEach(msg => {
+          if (msg.startsWith("番号")) {
+            data.code = msg.replace(/番号[:：]\s*(.+?)/i, "$1").trim().replace(/\s+/g, '.');
+          } else if (msg.startsWith("女优")) {
+            data.actor = msg
+              .replace(/女优[:：]\s*(.+?)/i, "$1")
+              .trim()
+              .split(/\s*#/)
+              .filter(Boolean)
+              .map(s => s.trim())
+              .join(".");
+          } else if (msg.startsWith("标签")) {
+            data.tags = msg
+              .replace(/标签[:：]\s*(.+?)/i, "$1")
+              .trim()
+              .split(" ");
+          } else {
+            data.desc += msg;
+          }
+        });
+        data.desc = data.desc.replace(/\s+/g, ' ')
+        data.order =
+          data.desc
+            .match(/((π[\d]+)|([\d]+[a-z]))/gi)
+            ?.at(0)
+            ?.trim() || "";
+        if (data.actor === "none" && data.tags.length > 1) {
+          data.actor = data.tags[0].substring(1)
         }
-        data.desc = rest.trim();
         return data;
       })
       .filter(it => it && it.order && it.order != "")
-      .reduce((arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]), []);
-    showModal(d);
+      .reduce(
+        (arr, it) => (arr.some(i => i.id === it.id) ? arr : [...arr, it]),
+        unsafeWindow.sgp003 || []
+      );
+    // unsafeWindow.sgp003.concat(d)
+    unsafeWindow.sgp003 = sortData(unsafeWindow.sgp003);
+    showModal(unsafeWindow.sgp003);
   });
 
   // 将按钮添加到页面 body
@@ -206,6 +240,18 @@
       // 如果body还没准备好，等待 DOMContentLoaded 事件或下一帧
       requestAnimationFrame(appendButtons);
     }
+  }
+
+  function sortData(data) {
+    const d = data.filter(it => it.order.startsWith("π") || it.order.match(/\d{6,}[a-z]/i));
+    d.sort((a, b) => a.id - b.id);
+    return d;
+  }
+
+  function getItems() {
+    return Array.from(document.querySelectorAll(".bubbles-date-group")).flatMap(group =>
+      Array.from(group.querySelectorAll("[data-mid]"))
+    );
   }
 
   appendButtons();
