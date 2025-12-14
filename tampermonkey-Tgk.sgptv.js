@@ -74,8 +74,8 @@
   padding: 1em;
   margin: 1em 0;
   overflow-x: auto;
-  overflow-y: auto;        
-  max-height: 90%; 
+  overflow-y: auto;
+  max-height: 90%;
   font-family: Consolas, Monaco, 'Courier New', monospace;
   font-size: 12px;
   color: #2c3e50;
@@ -138,7 +138,7 @@
           tags = [];
         msgContentList.forEach(msg => {
           if (msg.startsWith("番号：")) {
-            code = msg.replace(/番号[:：]\s*(.+?)/i, "$1").replace(/\s+/g, '.');
+            code = msg.replace(/番号[:：]\s*(.+?)/i, "$1").replace(/(\s+)|(，)/g, ".");
           } else if (msg.startsWith("#")) {
             tags = msg.split(" ").filter(it => it != "#水果派");
           } else {
@@ -150,12 +150,12 @@
           code,
           order:
             desc
-              .match(/((π[\d]+)|([\d]+[a-z]))/gi)
+              .match(/((π[\d]+)|([\d]+[01a-z]))/gi)
               ?.at(0)
               ?.trim() || "none",
           tags,
           duration: e.querySelector(".video-time")?.textContent,
-          desc: desc.replace(/\s+/g, ' '),
+          desc: desc.replace(/\s+/g, " "),
         };
       })
       .filter(it => it.order && !it.order.startsWith("none"))
@@ -192,7 +192,10 @@
         const data = { id, order: null, code: "none", actor: "none", tags: [], desc: "" };
         msgContentList.forEach(msg => {
           if (msg.startsWith("番号")) {
-            data.code = msg.replace(/番号[:：]\s*(.+?)/i, "$1").trim().replace(/\s+/g, '.');
+            data.code = msg
+              .replace(/番号[:：]\s*(.+?)/i, "$1")
+              .trim()
+              .replace(/\s+/g, ".");
           } else if (msg.startsWith("女优")) {
             data.actor = msg
               .replace(/女优[:：]\s*(.+?)/i, "$1")
@@ -210,14 +213,14 @@
             data.desc += msg;
           }
         });
-        data.desc = data.desc.replace(/\s+/g, ' ')
+        data.desc = data.desc.replace(/\s+/g, " ");
         data.order =
           data.desc
             .match(/((π[\d]+)|([\d]+[a-z]))/gi)
             ?.at(0)
             ?.trim() || "";
         if (data.actor === "none" && data.tags.length > 1) {
-          data.actor = data.tags[0].substring(1)
+          data.actor = data.tags[0].substring(1);
         }
         return data;
       })
@@ -243,7 +246,7 @@
   }
 
   function sortData(data) {
-    const d = data.filter(it => it.order.startsWith("π") || it.order.match(/\d{6,}[a-z]/i));
+    const d = data.filter(it => it.order.startsWith("π") || it.order.match(/\d{6,}[a-z]?/i));
     d.sort((a, b) => a.id - b.id);
     return d;
   }
