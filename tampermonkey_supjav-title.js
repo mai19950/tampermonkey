@@ -36,16 +36,19 @@
 
   updateTitle();
 
-  /* ========= ss 快捷键搜索 ========= */
+  /* ========= 快捷键监听（ss / cc） ========= */
 
   let lastKey = "";
   let lastTime = 0;
-  const INTERVAL = 500; // ms，允许的最大间隔
+  const INTERVAL = 500;
 
   document.addEventListener("keydown", function (e) {
+    if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+
+    const key = e.key.toLowerCase();
     const now = Date.now();
 
-    if (e.key.toLowerCase() === "s") {
+    if (key === "s") {
       if (lastKey === "s" && now - lastTime < INTERVAL) {
         const title = prompt("input title:");
         if (title) {
@@ -56,12 +59,53 @@
         lastTime = 0;
         return;
       }
-
-      lastKey = "s";
-      lastTime = now;
-    } else {
-      lastKey = "";
-      lastTime = 0;
     }
+
+    if (key === "c") {
+      if (lastKey === "c" && now - lastTime < INTERVAL) {
+        copyTitle();
+        lastKey = "";
+        lastTime = 0;
+        return;
+      }
+    }
+
+    lastKey = key;
+    lastTime = now;
   });
+
+  /* ========= 复制 title ========= */
+
+  function copyTitle() {
+    const text = document.title;
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          toast(`Copied: ${text}`);
+        })
+        .catch(() => {
+          legacyCopy(text);
+        });
+    } else {
+      legacyCopy(text);
+    }
+  }
+
+  function legacyCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    toast(`Copied: ${text}`);
+  }
+
+  /* ========= 简易提示 ========= */
+
+  function toast(msg) {
+    console.log(msg);
+  }
 })();
