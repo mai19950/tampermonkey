@@ -30,8 +30,16 @@
     if (!code) return;
 
     const isRM = originalTitle.includes("无码破解");
+    const hasSub = originalTitle.includes("中文字幕");
+    let newTitle = code;
+    if (isRM) {
+      newTitle += "-RM";
+    }
+    if (hasSub) {
+      newTitle += "_C";
+    }
 
-    document.title = isRM ? `${code}-RM` : code;
+    document.title = newTitle;
   }
 
   updateTitle();
