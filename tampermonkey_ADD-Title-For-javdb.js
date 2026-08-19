@@ -119,7 +119,7 @@
 
   $fixedCopyBtn.click(function () {
     const text = `'${$(".copy-title")
-      .map((_, el) => $(el).text().trim())
+      .map((_, el) => $(el).attr("title") || "")
       .get()
       .join(" ")}'`;
 
@@ -137,7 +137,7 @@
       return;
     }
     let text = $item.find("strong").text().trim();
-    const $copyBox = $('<div class="box copy-title">Title</div>');
+    const $copyBox = $(`<div class="box copy-title" title="${text}">Title</div>`);
     const $actionBox = $('<div class="item-action-box"></div>');
     $copyBox.click(function () {
       copyToClipboard(text);
