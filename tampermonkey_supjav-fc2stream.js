@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SupJav - fc2stream
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  自动捕获 fc2stream.tv 的 m3u8，复制到剪贴板并保存为 m3u8 文件
 // @match        https://supjav.com/*
 // @match        http://supjav.com/*
@@ -23,7 +23,7 @@
   'use strict';
 
   const TARGET_DOMAIN = 'fc2stream.tv';
-  const TARGET_KEYWORD = 'index-f1-v1-a1.m3u8';
+  const TARGET_KEYWORD = /index(?:-f1)?-v1-a1\.m3u8/;
   let lastUrl = '';
 
   function isTargetUrl (url) {
@@ -32,7 +32,7 @@
       const domainMatched =
         absoluteUrl.hostname === TARGET_DOMAIN ||
         absoluteUrl.hostname.endsWith('.' + TARGET_DOMAIN);
-      return domainMatched && absoluteUrl.href.includes(TARGET_KEYWORD);
+      return domainMatched && TARGET_KEYWORD.test(absoluteUrl.href);
     } catch (e) {
       return false;
     }
